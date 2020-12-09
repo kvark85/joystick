@@ -54,6 +54,7 @@ uint8_t stopTimer = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+uint8_t USBD_CUSTOM_HID_SendReport(USBD_HandleTypeDef  *pdev, uint8_t *report, uint16_t len);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -130,12 +131,13 @@ int main(void)
 					rfm73_buffer_read(RFM73_CMD_R_RX_PAYLOAD, rfm73buf, 1);
 				}
 				rfm73_register_write(RFM73_REG_STATUS,  0x42); // 0b0100 0010 reset interrupt pin
-				stopTimer = 0; // обнуляем счетчик остановки
-				//	TODO: reset velue
+				stopTimer = 0; // reset stop counter
+				buffer[1] = 0;
+				buffer[2] = 0;
 			}
 		}
 
-		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buffer, sizeof(buffer));
+		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buffer, (uint16_t)sizeof(buffer));
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
